@@ -16,8 +16,7 @@
   <screenshots>
     <screenshot type="default">
       <caption>WorkSpaces desktop</caption>
-      <!-- These are the screenshots for the android apps, from https://play.google.com/store/apps/details?id=com.amazon.workspaces -->
-      <image type="source" width="441" height="310">https://lh3.googleusercontent.com/CLOzQZjhT7BVay7EzrMLoZuXcceovVBjprBW-LUtlRvVxaPExw3QOIKu_2fyIrfqzog=w720-h310</image>
+      <!-- This is the screenshot for the android apps, from https://play.google.com/store/apps/details?id=com.amazon.workspaces -->
       <image type="source" width="1136" height="799">https://lh3.googleusercontent.com/CLOzQZjhT7BVay7EzrMLoZuXcceovVBjprBW-LUtlRvVxaPExw3QOIKu_2fyIrfqzog=w1600-h799</image>
     </screenshot>
   </screenshots>
