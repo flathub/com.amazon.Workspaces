@@ -24,6 +24,7 @@
   <icon type="remote" height="64" width="64">https://lh3.googleusercontent.com/gRCd2qBYLkMNjziqrfixPFmStV4gRpWkkhCW2ooBQtLRr03c6XdCQ9NwNsel2EtQAsU=s64</icon>
   <icon type="remote" height="128" width="128">https://lh3.googleusercontent.com/gRCd2qBYLkMNjziqrfixPFmStV4gRpWkkhCW2ooBQtLRr03c6XdCQ9NwNsel2EtQAsU=s128</icon>
   <releases>
+    <release version="3.0.8.529" date="2020-07-23"/>
     <release date="2020-06-03" version="3.0.7">
       <description>
         Minor bug fixes and enhancements
@@ -40,6 +41,5 @@
       </description>
     </release>
   </releases>
-  <content_rating type="oars-1.1" />
+  <content_rating type="oars-1.1"/>
 </component>
-
