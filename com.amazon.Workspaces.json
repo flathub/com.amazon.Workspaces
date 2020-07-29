@@ -1,8 +1,8 @@
 {
     "app-id": "com.amazon.Workspaces",
-    "runtime": "org.freedesktop.Platform",
-    "runtime-version": "19.08",
-    "sdk": "org.freedesktop.Sdk",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.36",
+    "sdk": "org.gnome.Sdk",
     "command": "workspacesclient",
     "tags": [
         "proprietary"
