@@ -47,9 +47,9 @@
                     "only-arches": [
                         "x86_64"
                     ],
-                    "url": "https://d3nt0h4h6pmmc4.cloudfront.net/ubuntu/dists/bionic/main/binary-amd64/workspacesclient_3.0.11.658_amd64.deb",
-                    "size": 25512688,
-                    "sha256": "3667c55606bfa1994fa6b3f555901ef1e9902aa8ae7a6e3ac6b0da61573c2027",
+                    "url": "https://d3nt0h4h6pmmc4.cloudfront.net/ubuntu/dists/bionic/main/binary-amd64/workspacesclient_3.0.12.747_amd64.deb",
+                    "size": 25600220,
+                    "sha256": "ef2c9488baca716c1edfe749b26d51d27113e9e315bee8426a171dac9282c31b",
                     "x-checker-data": {
                         "type": "debian-repo",
                         "package-name": "workspacesclient",
