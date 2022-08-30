@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Amazon WorkSpaces
+Comment=Amazon WorkSpace Client
+Exec=/app/bin/workspacesclient %u
+Icon=com.amazon.Workspaces
+Terminal=false
+MimeType=x-scheme-handler/workspaces;
+Categories=Network;RemoteAccess;
+Keywords=workspaces;remote;amazon;aws;
+StartupWMClass=workspacesclient
