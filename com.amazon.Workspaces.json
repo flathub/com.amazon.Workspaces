@@ -19,12 +19,14 @@
             "name": "workspacesclient",
             "buildsystem": "simple",
             "build-commands": [
-                "mkdir -p /app/bin /app/lib",
-                "install apply_extra /app/bin",
-                "install -Dm644 com.amazon.Workspaces.metainfo.xml /app/share/metainfo/com.amazon.Workspaces.metainfo.xml",
-                "cp /usr/bin/ar /usr/bin/desktop-file-install /app/bin",
-                "ARCH_TRIPLE=$(gcc --print-multiarch) && cp /usr/lib/${ARCH_TRIPLE}/libbfd-*.so /app/lib",
-                "ln -s /app/extra/bin/workspacesclient /app/bin/workspacesclient"
+                "mkdir -p ${FLATPAK_DEST}/bin ${FLATPAK_DEST}/lib",
+                "install apply_extra ${FLATPAK_DEST}/bin",
+                "install -Dm644 -t ${FLATPAK_DEST}/share/metainfo/ ${FLATPAK_ID}.metainfo.xml",
+                "install -Dm644 -t ${FLATPAK_DEST}/share/applications/ ${FLATPAK_ID}.desktop",
+                "install -Dm644 -t ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/ ${FLATPAK_ID}.svg",
+                "cp /usr/bin/ar ${FLATPAK_DEST}/bin",
+                "ARCH_TRIPLE=$(gcc --print-multiarch) && cp /usr/lib/${ARCH_TRIPLE}/libbfd-*.so ${FLATPAK_DEST}/lib",
+                "ln -s ${FLATPAK_DEST}/extra/bin/workspacesclient ${FLATPAK_DEST}/bin/workspacesclient"
             ],
             "sources": [
                 {
@@ -35,10 +37,7 @@
                         "tar xf data.tar.xz ./usr ./opt",
                         "rm -f data.tar.xz",
                         "mv opt/workspacesclient ./bin",
-                        "install -Dm644 usr/share/pixmaps/com.amazon.workspaces.svg export/share/icons/hicolor/scalable/apps/com.amazon.Workspaces.svg",
-                        "install -Dm644 usr/share/applications/workspacesclient.desktop export/share/applications/com.amazon.Workspaces.desktop",
-                        "rm -rf usr opt",
-                        "desktop-file-install --dir=/app/extra/export/share/applications --set-key=Exec --set-value=/app/bin/workspacesclient --remove-key=Path --set-icon=com.amazon.Workspaces /app/extra/export/share/applications/com.amazon.Workspaces.desktop"
+                        "rm -rf usr opt"
                     ]
                 },
                 {
@@ -61,6 +60,14 @@
                 {
                     "type": "file",
                     "path": "com.amazon.Workspaces.metainfo.xml"
+                },
+                {
+                    "type": "file",
+                    "path": "com.amazon.Workspaces.svg"
+                },
+                {
+                    "type": "file",
+                    "path": "com.amazon.Workspaces.desktop"
                 }
             ]
         }
