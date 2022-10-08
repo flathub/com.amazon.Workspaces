@@ -15,6 +15,26 @@
         "--share=network"
     ],
     "modules": [
+        "shared-modules/libusb/libusb.json",
+        {
+            "name": "hiredis0.13",
+            "buildsystem": "simple",
+            "build-commands": [
+                "make PREFIX=/app install"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/redis/hiredis.git",
+                    "tag": "v0.13.3",
+                    "commit": "010756025e8cefd1bc66c6d4ed3b1648ef6f1f95"
+                }
+            ],
+            "cleanup": [
+                "/include",
+                "/lib/pkgconfig"
+            ]
+        },
         {
             "name": "workspacesclient",
             "buildsystem": "simple",
