@@ -36,6 +36,52 @@
             ]
         },
         {
+            "name": "icu63",
+            "buildsystem": "simple",
+            "build-commands": [
+                "cd source && ./configure --prefix=${FLATPAK_DEST} --sbindir=${FLATPAK_DEST}/bin --disable-tests --disable-samples && make -j $FLATPAK_BUILDER_N_JOBS install"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/unicode-org/icu/releases/download/release-63-2/icu4c-63_2-src.tgz",
+                    "sha256": "4671e985b5c11252bff3c2374ab84fd73c609f2603bb6eb23b8b154c69ea4215"
+                }
+            ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/lib/icu",
+                "/lib/libicutest.so*",
+                "/lib/libicutu.so*",
+                "/share/icu",
+                "/share/man"
+            ]
+        },
+        {
+            "name": "openssl1",
+            "buildsystem": "simple",
+            "build-commands": [
+                "./config --prefix=${FLATPAK_DEST} --openssldir=${FLATPAK_DEST}/ssl shared zlib",
+                "make -j $FLATPAK_BUILDER_N_JOBS",
+                "make install"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://www.openssl.org/source/openssl-1.1.1b.tar.gz",
+                    "sha256": "5c557b023230413dfb0756f3137a13e6d726838ccd1430888ad15bfb2b43ea4b"
+                }
+            ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/lib/pkgconfig",
+                "/share/doc",
+                "/share/man"
+            ]
+        },
+        {
             "name": "workspacesclient",
             "buildsystem": "simple",
             "build-commands": [
