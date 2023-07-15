@@ -2,7 +2,7 @@
 Type=Application
 Encoding=UTF-8
 Name=Amazon WorkSpaces
-Comment=Amazon WorkSpace Client
+Comment=Amazon WorkSpaces
 Exec=/app/bin/workspacesclient %u
 Icon=com.amazon.Workspaces
 Terminal=false
