@@ -31,6 +31,7 @@
                 }
             ],
             "cleanup": [
+                "*.a",
                 "/include",
                 "/lib/pkgconfig"
             ]
@@ -52,8 +53,7 @@
                 "/bin",
                 "/include",
                 "/lib/icu",
-                "/lib/libicutest.so*",
-                "/lib/libicutu.so*",
+                "/lib/pkgconfig",
                 "/share/icu",
                 "/share/man"
             ]
@@ -62,10 +62,22 @@
             "name": "graphicsmagick",
             "builddir": true,
             "config-opts": [
-                "--enable-shared"
+                "--enable-shared",
+                "--enable-quantum-library-names",
+                "--with-quantum-depth=16",
+                "--with-magick_plus_plus",
+                "--with-modules",
+                "--with-threads"
             ],
             "cleanup": [
-                "/bin/GraphicsMagick*config"
+                "*.a",
+                "*.la",
+                "/bin/GraphicsMagick*config",
+                "/bin/gm",
+                "/include",
+                "/lib/pkgconfig",
+                "/share/doc",
+                "/share/man"
             ],
             "sources": [
                 {
