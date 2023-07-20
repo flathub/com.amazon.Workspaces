@@ -108,6 +108,8 @@
                         "ar x 'workspacesclient.deb' data.tar.xz",
                         "tar xf data.tar.xz ./usr ./opt",
                         "rm -f data.tar.xz",
+                        "mkdir -p opt/workspacesclient/pcoip-client/vchan_plugins",
+                        "cp usr/lib/x86_64-linux-gnu/pcoip-client/vchan_plugins/libvchan-plugin-clipboard.so opt/workspacesclient/pcoip-client/vchan_plugins",
                         "mv opt/workspacesclient ./bin",
                         "rm -rf usr opt"
                     ]
