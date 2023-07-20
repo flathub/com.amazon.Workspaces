@@ -17,7 +17,7 @@
     "modules": [
         "shared-modules/libusb/libusb.json",
         {
-            "name": "hiredis0.14",
+            "name": "hiredis0.13",
             "buildsystem": "simple",
             "build-commands": [
                 "make PREFIX=/app install"
@@ -26,8 +26,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/redis/hiredis.git",
-                    "tag": "v0.14.1",
-                    "commit": "f9717aed445547c8ab11a3a4117f648c06e62b56"
+                    "tag": "v0.13.3",
+                    "commit": "010756025e8cefd1bc66c6d4ed3b1648ef6f1f95"
                 }
             ],
             "cleanup": [
@@ -118,14 +118,14 @@
                     "only-arches": [
                         "x86_64"
                     ],
-                    "url": "https://d3nt0h4h6pmmc4.cloudfront.net/ubuntu/dists/focal/main/binary-amd64/workspacesclient_4.6.0.4187_amd64.deb",
-                    "size": 28598808,
-                    "sha256": "03e6fbf5ec21e210487fc8e02b420d20b164b53a914693a05d11f4146ce257a7",
+                    "url": "https://d3nt0h4h6pmmc4.cloudfront.net/ubuntu/dists/bionic/main/binary-amd64/workspacesclient_4.5.0.4198_amd64.deb",
+                    "size": 28547732,
+                    "sha256": "033f5a4bd483ab33c3b1257e76df4d37f49ab7e0cda2137a3e860e6e665f0401",
                     "x-checker-data": {
                         "type": "debian-repo",
                         "package-name": "workspacesclient",
                         "root": "https://d3nt0h4h6pmmc4.cloudfront.net/ubuntu",
-                        "dist": "focal",
+                        "dist": "bionic",
                         "component": "main"
                     }
                 },
