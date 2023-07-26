@@ -26,7 +26,55 @@ cleanup:
 
 modules:
 
+  - name: openssl1.1
+    buildsystem: simple
+    build-commands:
+      - ./config --prefix=${FLATPAK_DEST}
+      - make
+      - make install
+
+    sources:
+      - type: archive
+        url: https://www.openssl.org/source/openssl-1.1.1u.tar.gz
+        sha256: e2f8d84b523eecd06c7be7626830370300fbcc15386bf5142d72758f6963ebc6
+        x-checker-data:
+          type: anitya
+          project-id: 20333
+          url-template: https://www.openssl.org/source/openssl-$version.tar.gz
+
   - 'shared-modules/libusb/libusb.json'
+
+  - 'shared-modules/libsoup/libsoup-2.4.json'
+
+  - name: unifdef
+    no-autogen: true
+    make-install-args:
+      - prefix=${FLATPAK_DEST}
+
+    sources:
+      - type: archive
+        url: https://dotat.at/prog/unifdef/unifdef-2.12.tar.xz
+        sha256: 43ce0f02ecdcdc723b2475575563ddb192e988c886d368260bc0a63aee3ac400
+    cleanup:
+      - '*'
+
+  - name: webkit2gtk-4.0
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DPORT=GTK
+      - -DENABLE_BUBBLEWRAP_SANDBOX=OFF
+      - -DENABLE_DOCUMENTATION=OFF
+      - -DUSE_SOUP2=ON
+
+    sources:
+      - type: archive
+        url: https://webkitgtk.org/releases/webkitgtk-2.40.4.tar.xz
+        sha256: 8d163379297a2f7f51b455127f99836d9fe1572289f77b630ff3d63a2cb06dac
+        x-checker-data:
+          type: html
+          url: https://webkitgtk.org/releases/
+          version-pattern: LATEST-STABLE-(\d[\.\d]+\d)
+          url-template: https://webkitgtk.org/releases/webkitgtk-$version.tar.xz
 
   - name: hiredis0.14
     buildsystem: simple
