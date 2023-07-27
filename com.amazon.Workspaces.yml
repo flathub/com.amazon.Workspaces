@@ -1,0 +1,164 @@
+app-id: com.amazon.Workspaces
+runtime: org.gnome.Platform
+runtime-version: '44'
+sdk: org.gnome.Sdk
+command: workspacesclient
+tags:
+  - proprietary
+
+finish-args:
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --share=ipc
+  - --device=dri
+  - --socket=pulseaudio
+  - --share=network
+  - --env=LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/app/extra/bin
+
+cleanup:
+  - '*.a'
+  - '*.la'
+  - /include
+  - /lib/icu
+  - /lib/pkgconfig
+  - /share/doc
+  - /share/gir-1.0
+  - /share/icu
+  - /share/man
+
+modules:
+
+  - name: openssl1.1
+    buildsystem: simple
+    build-commands:
+      - ./config --prefix=${FLATPAK_DEST}
+      - make
+      - make install
+
+    sources:
+      - type: archive
+        url: https://www.openssl.org/source/openssl-1.1.1u.tar.gz
+        sha256: e2f8d84b523eecd06c7be7626830370300fbcc15386bf5142d72758f6963ebc6
+        x-checker-data:
+          type: anitya
+          project-id: 20333
+          url-template: https://www.openssl.org/source/openssl-$version.tar.gz
+
+  - 'shared-modules/libusb/libusb.json'
+
+  - 'shared-modules/libsoup/libsoup-2.4.json'
+
+  - name: unifdef
+    no-autogen: true
+    make-install-args:
+      - prefix=${FLATPAK_DEST}
+
+    sources:
+      - type: archive
+        url: https://dotat.at/prog/unifdef/unifdef-2.12.tar.xz
+        sha256: 43ce0f02ecdcdc723b2475575563ddb192e988c886d368260bc0a63aee3ac400
+    cleanup:
+      - '*'
+
+  - name: webkit2gtk-4.0
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DPORT=GTK
+      - -DENABLE_BUBBLEWRAP_SANDBOX=OFF
+      - -DENABLE_DOCUMENTATION=OFF
+      - -DUSE_SOUP2=ON
+
+    sources:
+      - type: archive
+        url: https://webkitgtk.org/releases/webkitgtk-2.40.4.tar.xz
+        sha256: 8d163379297a2f7f51b455127f99836d9fe1572289f77b630ff3d63a2cb06dac
+        x-checker-data:
+          type: html
+          url: https://webkitgtk.org/releases/
+          version-pattern: LATEST-STABLE-(\d[\.\d]+\d)
+          url-template: https://webkitgtk.org/releases/webkitgtk-$version.tar.xz
+
+  - name: hiredis0.14
+    buildsystem: simple
+    build-commands:
+      - make PREFIX=${FLATPAK_DEST} install
+
+    sources:
+      - type: git
+        url: https://github.com/redis/hiredis.git
+        tag: v0.14.1
+        commit: f9717aed445547c8ab11a3a4117f648c06e62b56
+
+  - name: icu63
+    buildsystem: simple
+    build-commands:
+      - cd source && ./configure --prefix=${FLATPAK_DEST} --sbindir=${FLATPAK_DEST}/bin --disable-tests --disable-samples && make -j $FLATPAK_BUILDER_N_JOBS install
+
+    sources:
+      - type: archive
+        url: https://github.com/unicode-org/icu/releases/download/release-63-2/icu4c-63_2-src.tgz
+        sha256: 4671e985b5c11252bff3c2374ab84fd73c609f2603bb6eb23b8b154c69ea4215
+    cleanup:
+      - /bin
+
+  - name: graphicsmagick
+    builddir: true
+    config-opts:
+      - --enable-shared
+      - --enable-quantum-library-names
+      - --with-quantum-depth=16
+      - --with-magick_plus_plus
+      - --with-modules
+      - --with-threads
+
+    sources:
+      - type: archive
+        url: https://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/1.3.40/GraphicsMagick-1.3.40.tar.xz
+        sha256: 97dc1a9d4e89c77b25a3b24505e7ff1653b88f9bfe31f189ce10804b8efa7746
+    cleanup:
+      - /bin/GraphicsMagick*config
+      - /bin/gm
+
+  - name: workspacesclient
+    buildsystem: simple
+    build-commands:
+      - mkdir -p ${FLATPAK_DEST}/bin ${FLATPAK_DEST}/lib
+      - install apply_extra ${FLATPAK_DEST}/bin
+      - install -Dm644 -t ${FLATPAK_DEST}/share/metainfo/ ${FLATPAK_ID}.metainfo.xml
+      - install -Dm644 -t ${FLATPAK_DEST}/share/applications/ ${FLATPAK_ID}.desktop
+      - install -Dm644 -t ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/ ${FLATPAK_ID}.svg
+      - cp /usr/bin/ar ${FLATPAK_DEST}/bin
+      - ARCH_TRIPLE=$(gcc --print-multiarch) && cp /usr/lib/${ARCH_TRIPLE}/libbfd-*.so ${FLATPAK_DEST}/lib
+      - ln -s ${FLATPAK_DEST}/extra/bin/workspacesclient ${FLATPAK_DEST}/bin/workspacesclient
+
+    sources:
+      - type: script
+        dest-filename: apply_extra
+        commands:
+          - ar x 'workspacesclient.deb' data.tar.xz
+          - tar xf data.tar.xz ./usr ./opt
+          - rm -f data.tar.xz
+          - mkdir -p opt/workspacesclient/pcoip-client/vchan_plugins
+          - cp usr/lib/x86_64-linux-gnu/pcoip-client/vchan_plugins/libvchan-plugin-clipboard.so opt/workspacesclient/pcoip-client/vchan_plugins
+          - mv opt/workspacesclient ./bin
+          - rm -rf usr opt
+
+      - type: file
+        path: com.amazon.Workspaces.metainfo.xml
+      - type: file
+        path: com.amazon.Workspaces.svg
+      - type: file
+        path: com.amazon.Workspaces.desktop
+
+      - type: extra-data
+        filename: workspacesclient.deb
+        only-arches: [x86_64]
+        url: https://d3nt0h4h6pmmc4.cloudfront.net/ubuntu/dists/focal/main/binary-amd64/workspacesclient_4.6.0.4187_amd64.deb
+        sha256: 03e6fbf5ec21e210487fc8e02b420d20b164b53a914693a05d11f4146ce257a7
+        size: 28598808
+        x-checker-data:
+          type: debian-repo
+          package-name: workspacesclient
+          root: https://d3nt0h4h6pmmc4.cloudfront.net/ubuntu
+          dist: focal
+          component: main
