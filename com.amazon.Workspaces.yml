@@ -44,9 +44,9 @@ modules:
           project-id: 20333
           url-template: https://www.openssl.org/source/openssl-$version.tar.gz
 
-  - 'shared-modules/libusb/libusb.json'
+  - shared-modules/libusb/libusb.json
 
-  - 'shared-modules/libsoup/libsoup-2.4.json'
+  - shared-modules/libsoup/libsoup-2.4.json
 
   - name: unifdef
     no-autogen: true
@@ -70,8 +70,8 @@ modules:
 
     sources:
       - type: archive
-        url: https://webkitgtk.org/releases/webkitgtk-2.40.4.tar.xz
-        sha256: 8d163379297a2f7f51b455127f99836d9fe1572289f77b630ff3d63a2cb06dac
+        url: https://webkitgtk.org/releases/webkitgtk-2.40.5.tar.xz
+        sha256: 7de051a263668621d91a61a5eb1c3771d1a7cec900043d4afef06c326c16037f
         x-checker-data:
           type: html
           url: https://webkitgtk.org/releases/
@@ -92,7 +92,8 @@ modules:
   - name: icu63
     buildsystem: simple
     build-commands:
-      - cd source && ./configure --prefix=${FLATPAK_DEST} --sbindir=${FLATPAK_DEST}/bin --disable-tests --disable-samples && make -j $FLATPAK_BUILDER_N_JOBS install
+      - cd source && ./configure --prefix=${FLATPAK_DEST} --sbindir=${FLATPAK_DEST}/bin
+        --disable-tests --disable-samples && make -j $FLATPAK_BUILDER_N_JOBS install
 
     sources:
       - type: archive
@@ -128,7 +129,8 @@ modules:
       - install -Dm644 -t ${FLATPAK_DEST}/share/applications/ ${FLATPAK_ID}.desktop
       - install -Dm644 -t ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/ ${FLATPAK_ID}.svg
       - cp /usr/bin/ar ${FLATPAK_DEST}/bin
-      - ARCH_TRIPLE=$(gcc --print-multiarch) && cp /usr/lib/${ARCH_TRIPLE}/libbfd-*.so ${FLATPAK_DEST}/lib
+      - ARCH_TRIPLE=$(gcc --print-multiarch) && cp /usr/lib/${ARCH_TRIPLE}/libbfd-*.so
+        ${FLATPAK_DEST}/lib
       - ln -s ${FLATPAK_DEST}/extra/bin/workspacesclient ${FLATPAK_DEST}/bin/workspacesclient
 
     sources:
@@ -139,7 +141,8 @@ modules:
           - tar xf data.tar.xz ./usr ./opt
           - rm -f data.tar.xz
           - mkdir -p opt/workspacesclient/pcoip-client/vchan_plugins
-          - cp usr/lib/x86_64-linux-gnu/pcoip-client/vchan_plugins/libvchan-plugin-clipboard.so opt/workspacesclient/pcoip-client/vchan_plugins
+          - cp usr/lib/x86_64-linux-gnu/pcoip-client/vchan_plugins/libvchan-plugin-clipboard.so
+            opt/workspacesclient/pcoip-client/vchan_plugins
           - mv opt/workspacesclient ./bin
           - rm -rf usr opt
 
