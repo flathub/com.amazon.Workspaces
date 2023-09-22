@@ -136,8 +136,8 @@ modules:
       - install -Dm644 -t ${FLATPAK_DEST}/share/applications/ ${FLATPAK_ID}.desktop
       - install -Dm644 -t ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/ ${FLATPAK_ID}.svg
       - cp /usr/bin/ar ${FLATPAK_DEST}/bin
-      - ARCH_TRIPLE=$(gcc --print-multiarch) && cp /usr/lib/${ARCH_TRIPLE}/libbfd-*.so
-        ${FLATPAK_DEST}/lib
+      - ARCH_TRIPLE=$(gcc --print-multiarch) && cp -a /usr/lib/${ARCH_TRIPLE}/libbfd-*.so
+        ${FLATPAK_DEST}/lib && cp -a /usr/lib/${ARCH_TRIPLE}/libsframe.so* ${FLATPAK_DEST}/lib
       - ln -s ${FLATPAK_DEST}/extra/bin/workspacesclient ${FLATPAK_DEST}/bin/workspacesclient
 
     sources:
