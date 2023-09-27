@@ -13,38 +13,83 @@ finish-args:
   - --device=dri
   - --socket=pulseaudio
   - --share=network
-  - --env=LD_LIBRARY_PATH=/app/extra/bin
+  - --own-name=com.amazon.workspacesclient
 
 cleanup:
   - '*.a'
   - '*.la'
   - /include
   - /lib/icu
+  - /lib/cmake
   - /lib/pkgconfig
   - /share/doc
   - /share/gir-1.0
   - /share/icu
   - /share/man
+  - /share/vala
 
 modules:
 
-  - name: openssl1.1
-    buildsystem: simple
-    build-commands:
-      - ./config --prefix=${FLATPAK_DEST}
-      - make
-      - make install
-
+  - name: dconf
+    buildsystem: meson
+    config-opts:
+      - -Dbash_completion=false
+      - -Dman=false
+      - -Dvapi=false
+    cleanup:
+      - /etc
+      - /include
+      - ca.desrt.dconf.service
+      - dconf.service
+      - dconf-service
+      - '*.pc'
     sources:
       - type: archive
-        url: https://www.openssl.org/source/openssl-1.1.1w.tar.gz
-        sha256: cf3098950cb4d853ad95c0841f1f9c6d3dc102dccfcacd521d93925208b76ac8
-        x-checker-data:
-          type: anitya
-          project-id: 20333
-          url-template: https://www.openssl.org/source/openssl-$version.tar.gz
+        url: https://download.gnome.org/sources/dconf/0.40/dconf-0.40.0.tar.xz
+        sha256: cf7f22a4c9200421d8d3325c5c1b8b93a36843650c9f95d6451e20f0bcb24533
+      - type: patch
+        path: patches/dconf/no-systemd.patch
 
-  - shared-modules/libusb/libusb.json
+  - name: jbig
+    no-autogen: true
+    no-make-install: true
+    make-args:
+      - PREFIX=${FLATPAK_DEST}
+    sources:
+      - type: archive
+        url: https://www.cl.cam.ac.uk/~mgk25/jbigkit/download/jbigkit-2.1.tar.gz
+        sha256: de7106b6bfaf495d6865c7dd7ac6ca1381bd12e0d81405ea81e7f2167263d932
+      - type: patch
+        path: patches/libjbig/jbigkit-2.1-shared.diff
+    post-install:
+      - mkdir -p ${FLATPAK_DEST}/lib
+      - cp -a libjbig/.libs/*.so.* ${FLATPAK_DEST}/lib
+
+  - name: libdeflate
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DLIBDEFLATE_BUILD_STATIC_LIB=OFF
+      - -DLIBDEFLATE_BUILD_TESTS=OFF
+    sources:
+      - type: archive
+        url: https://github.com/ebiggers/libdeflate/releases/download/v1.19/libdeflate-1.19.tar.gz
+        sha256: d9bb9bdd8cc5a8c1f7f6226fa0053dd72861e15f366e7ff7d0d191eac16d66f3
+
+  - name: pcsclite
+    config-opts:
+      - --sbindir=/app/bin
+      - --disable-libsystemd
+      - --disable-libudev
+      - --disable-usb
+      - --with-systemdsystemunitdir=no
+    sources:
+      - type: git
+        url: https://github.com/LudovicRousseau/PCSC
+        tag: 2.0.0
+        commit: 549922c1355fdd1e85eb0a952fefda7bb96e286a
+    cleanup:
+      - /bin
 
   - shared-modules/libsoup/libsoup-2.4.json
 
@@ -52,7 +97,6 @@ modules:
     no-autogen: true
     make-install-args:
       - prefix=${FLATPAK_DEST}
-
     sources:
       - type: archive
         url: https://dotat.at/prog/unifdef/unifdef-2.12.tar.xz
@@ -73,85 +117,48 @@ modules:
       - -DENABLE_GAMEPAD=OFF
     sources:
       - type: archive
-        url: https://webkitgtk.org/releases/webkitgtk-2.42.0.tar.xz
-        sha256: 828f95935861fae583fb8f2ae58cf64c63c178ae2b7c2d6f73070813ad64ed1b
+        url: https://webkitgtk.org/releases/webkitgtk-2.42.1.tar.xz
+        sha256: 6f41fac9989d3ee51c08c48de1d439cdeddecbc757e34b6180987d99b16d2499
         x-checker-data:
           type: html
           url: https://webkitgtk.org/releases/
           version-pattern: LATEST-STABLE-(\d[\.\d]+\d)
           url-template: https://webkitgtk.org/releases/webkitgtk-$version.tar.xz
 
-  - name: hiredis0.14
-    buildsystem: simple
-    build-commands:
-      - make PREFIX=${FLATPAK_DEST} install
-
-    sources:
-      - type: git
-        url: https://github.com/redis/hiredis.git
-        tag: v0.14.1
-        commit: f9717aed445547c8ab11a3a4117f648c06e62b56
-
-  - name: icu63
-    buildsystem: simple
-    build-commands:
-      - cd source && ./configure --prefix=${FLATPAK_DEST} --sbindir=${FLATPAK_DEST}/bin
-        --disable-tests --disable-samples && make -j $FLATPAK_BUILDER_N_JOBS install
-
-    sources:
-      - type: archive
-        url: https://github.com/unicode-org/icu/releases/download/release-63-2/icu4c-63_2-src.tgz
-        sha256: 4671e985b5c11252bff3c2374ab84fd73c609f2603bb6eb23b8b154c69ea4215
-    cleanup:
-      - /bin
-
-  - name: graphicsmagick
-    builddir: true
-    config-opts:
-      - --enable-shared
-      - --enable-quantum-library-names
-      - --with-quantum-depth=16
-      - --with-magick_plus_plus
-      - --with-modules
-      - --with-threads
-
-    sources:
-      - type: archive
-        url: https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/1.3.42/GraphicsMagick-1.3.42.tar.xz
-        sha256: 484fccfd2b2faf6c2ba9151469ece5072bcb91ba4ed73e75ed3d8e46c759d557
-        x-checker-data:
-          type: anitya
-          project-id: 1248
-          url-template: https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/$version/GraphicsMagick-$version.tar.xz
-    cleanup:
-      - /bin/GraphicsMagick*config
-      - /bin/gm
-
   - name: workspacesclient
     buildsystem: simple
     build-commands:
-      - mkdir -p ${FLATPAK_DEST}/bin ${FLATPAK_DEST}/lib
+      - mkdir -p ${FLATPAK_DEST}/bin
       - install apply_extra ${FLATPAK_DEST}/bin
+      - install run.sh ${FLATPAK_DEST}/bin
+      - ln -s ${FLATPAK_DEST}/bin/run.sh ${FLATPAK_DEST}/bin/workspacesclient
       - install -Dm644 -t ${FLATPAK_DEST}/share/metainfo/ ${FLATPAK_ID}.metainfo.xml
       - install -Dm644 -t ${FLATPAK_DEST}/share/applications/ ${FLATPAK_ID}.desktop
       - install -Dm644 -t ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/ ${FLATPAK_ID}.svg
-      - cp /usr/bin/ar ${FLATPAK_DEST}/bin
-      - ARCH_TRIPLE=$(gcc --print-multiarch) && cp -a /usr/lib/${ARCH_TRIPLE}/libbfd-*.so
-        ${FLATPAK_DEST}/lib && cp -a /usr/lib/${ARCH_TRIPLE}/libsframe.so* ${FLATPAK_DEST}/lib
-      - ln -s ${FLATPAK_DEST}/extra/bin/workspacesclient ${FLATPAK_DEST}/bin/workspacesclient
-
     sources:
       - type: script
         dest-filename: apply_extra
         commands:
-          - ar x 'workspacesclient.deb' data.tar.xz
-          - tar xf data.tar.xz ./usr ./opt
-          - rm -f data.tar.xz
-          - mkdir -p opt/workspacesclient/pcoip-client/vchan_plugins
-          - cp usr/lib/x86_64-linux-gnu/pcoip-client/vchan_plugins/libvchan-plugin-clipboard.so
-            opt/workspacesclient/pcoip-client/vchan_plugins
-          - mv opt/workspacesclient ./bin
-          - rm -rf usr opt
+          - bsdtar -Oxf workspacesclient.deb data.tar.xz | bsdtar -xf -
+          - rm -rf usr/share/applications usr/share/icons workspacesclient.deb
+          - chmod -R 755 usr/lib
+          - ln -sf /app/lib/gio/modules/libdconfsettings.so usr/lib/x86_64-linux-gnu/workspacesclient/dcv/gio/modules/
+          - sed -i -e "s/basedir=\/usr/basedir=\/app\/extra\/usr/g" -e "/LD_LIBRARY_PATH/d" -e "/XDG_DATA_DIRS/d" usr/lib/x86_64-linux-gnu/workspacesclient/dcv/dcvclient
+          - GSETTINGS_SCHEMA_DIR="./usr/share/glib-2.0/schemas:${GSETTINGS_SCHEMA_DIR}" glib-compile-schemas usr/share/glib-2.0/schemas
+          - usr/lib/x86_64-linux-gnu/workspacesclient/dcv/gdk-pixbuf-query-loaders usr/lib/x86_64-linux-gnu/workspacesclient/dcv/gdk-pixbuf-2.0/2.10.0/loaders/*.so  > usr/lib/x86_64-linux-gnu/workspacesclient/dcv/gdk-pixbuf-2.0/2.10.0/loaders.cache
+          - usr/lib/x86_64-linux-gnu/workspacesclient/dcv/gtk-query-immodules-3.0 usr/lib/x86_64-linux-gnu/workspacesclient/dcv/gtk-3.0/3.0.0/immodules/*.so > usr/lib/x86_64-linux-gnu/workspacesclient/dcv/gtk-3.0/3.0.0/immodules.cache
+
+      - type: script
+        dest-filename: run.sh
+        commands:
+          - set -e
+          - export LD_LIBRARY_PATH="/app/extra/usr/lib/x86_64-linux-gnu/workspacesclient/dcv:/app/lib:/app/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
+          - export PATH="/app/extra/usr/lib/x86_64-linux-gnu/workspacesclient/dcv:${PATH}"
+          - export XDG_DATA_DIRS="/app/extra/usr/share:${XDG_DATA_DIRS}"
+          - export GTK_IM_MODULE_FILE="/app/extra/usr/lib/x86_64-linux-gnu/workspacesclient/dcv/gtk-3.0/3.0.0/immodules.cache"
+          - export GDK_PIXBUF_MODULE_FILE="/app/extra/usr/lib/x86_64-linux-gnu/workspacesclient/dcv/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+          - export TMPDIR=$XDG_CACHE_HOME/tmp
+          - exec /app/extra/usr/bin/workspacesclient "$@"
 
       - type: file
         path: com.amazon.Workspaces.metainfo.xml
@@ -163,12 +170,6 @@ modules:
       - type: extra-data
         filename: workspacesclient.deb
         only-arches: [x86_64]
-        url: https://d3nt0h4h6pmmc4.cloudfront.net/ubuntu/dists/focal/main/binary-amd64/workspacesclient_4.6.0.4187_amd64.deb
-        sha256: 03e6fbf5ec21e210487fc8e02b420d20b164b53a914693a05d11f4146ce257a7
-        size: 28598808
-        x-checker-data:
-          type: debian-repo
-          package-name: workspacesclient
-          root: https://d3nt0h4h6pmmc4.cloudfront.net/ubuntu
-          dist: focal
-          component: main
+        url: https://d3nt0h4h6pmmc4.cloudfront.net/new_workspacesclient_jammy_amd64.deb
+        sha256: c3ad39ea8e26008dfd484abde2ce5469b74f9650ab49a2b5d4b322f7b5de0d80
+        size: 58664720

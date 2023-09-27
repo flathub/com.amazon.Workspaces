@@ -1,0 +1,481 @@
+<schemalist>
+
+  <enum id="com.amazon.workspacesclient.dcv.DcvQualityMode">
+    <value nick="smooth" value="0"/>
+    <value nick="sharp" value="1"/>
+  </enum>
+
+  <enum id="com.amazon.workspacesclient.dcv.DcvProxyType">
+    <value nick="none" value="0"/>
+    <value nick="system" value="1"/>
+    <value nick="socksv5" value="2"/>
+    <value nick="http" value="3"/>
+    <value nick="https" value="4"/>
+  </enum>
+
+  <enum id="com.nicesoftware.DcvViewer.DcvTransportSelection">
+    <value nick="auto" value="0"/>
+    <value nick="websocket" value="1"/>
+    <value nick="quic" value="2"/>
+  </enum>
+
+  <enum id="com.amazon.workspacesclient.dcv.DcvOptionKeyMode">
+    <value nick="alt" value="0"/>
+    <value nick="local" value="1"/>
+  </enum>
+
+  <enum id="com.amazon.workspacesclient.dcv.DcvCommandKeyMode">
+    <value nick="control" value="0"/>
+    <value nick="meta" value="1"/>
+  </enum>
+
+  <enum id="com.amazon.workspacesclient.dcv.DcvExtensionsManagerLoadPolicy">
+    <value nick="only-signed" value="0"/>
+    <value nick="all" value="1"/>
+  </enum>
+
+  <enum id="com.amazon.workspacesclient.dcv.DcvGrabKeyboardMode">
+    <value nick="never" value="0"/>
+    <value nick="on-fullscreen" value="1"/>
+    <value nick="always" value="2"/>
+  </enum>
+
+  <schema id="com.amazon.workspacesclient.dcv.log" path="/com/amazon/workspacesclient/dcv/log/" gettext-domain="dcvclient">
+    <key name="directory" type="s">
+      <default>''</default>
+      <summary>Log Output Directory</summary>
+      <description>Specify the directory path where logs will be saved</description>
+    </key>
+
+    <key name="level" type="s">
+      <default>'info'</default>
+      <summary>Log Level</summary>
+      <description>Control the verbosity of logs</description>
+    </key>
+
+    <key name="rotate" type="u">
+      <default>10</default>
+      <summary>Number of log file rorations</summary>
+      <description>Number of time log files are rotated before being removed. If the value is 0, old versions are removed rather than rotated.</description>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.metrics" path="/com/amazon/workspacesclient/dcv/metrics/" gettext-domain="dcvclient">
+    <key name="reporters" type="as">
+      <default>[]</default>
+      <summary>Metrics reporters</summary>
+      <description>Specify the name of the metrics reporters to use. At
+      the moment it supports the 'console', 'carbon', 'jsonlogfile' and 'logfile' reporters.
+      If left empty metrics are not reported.</description>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.metrics.carbon" path="/com/amazon/workspacesclient/dcv/metrics/carbon/" gettext-domain="dcvclient">
+    <key name="prefix" type="s">
+      <default>'dcvserver'</default>
+      <summary>carbon metrics prefix</summary>
+      <description>Specify the prefix assigned to each metric.</description>
+    </key>
+
+    <key name="server-address" type="s">
+       <default>'localhost'</default>
+       <summary>carbond server address</summary>
+       <description>Specify the carbon server address.</description>
+    </key>
+
+    <key name="server-port" type="q">
+      <default>2003</default>
+      <summary>carbond server port</summary>
+      <description>Specify the carbon server TCP port.</description>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.proxy" path="/com/amazon/workspacesclient/dcv/proxy/">
+    <key name="type" enum="com.amazon.workspacesclient.dcv.DcvProxyType">
+      <default>'system'</default>
+    </key>
+
+    <key name="hostname" type="s">
+      <default>''</default>
+    </key>
+
+    <key name="port" type="q">
+      <default>0</default>
+    </key>
+
+    <key name="require-password" type="b">
+      <default>false</default>
+    </key>
+
+    <key name="username" type="s">
+      <default>''</default>
+    </key>
+
+    <key name="password" type="s">
+      <default>''</default>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.quality" path="/com/amazon/workspacesclient/dcv/quality/" gettext-domain="dcvclient">
+    <key name="smooth-range" type="(uu)">
+      <default>(20, 90)</default>
+      <summary>Best responsiveness quality</summary>
+      <description>Provides most fluid experience</description>
+    </key>
+
+    <key name="sharp-range" type="(uu)">
+      <default>(70, 90)</default>
+      <summary>Best image quality</summary>
+      <description>Provides best image quality</description>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.display" path="/com/amazon/workspacesclient/dcv/display/" gettext-domain="dcvclient">
+    <key name="enabled-codecs" type="as">
+      <default>[]</default>
+      <summary>Enabled display codecs</summary>
+      <description>Specifies the name of the display codecs to use. An empty list enables all
+      display codecs. The display codecs are ['h264', 'jpeg', 'lz4']
+      </description>
+    </key>
+
+    <key name="enable-yuv444-decoding" type="b">
+      <default>false</default>
+      <summary>Enable YUV444 decoding</summary>
+      <description>If enabled, the client will prefer the YUV444 format in codec capabilities negotiation.
+      Notice that if the setting is disabled then enable-high-color-accuracy will take precedence in case
+      the server supports it.
+      </description>
+    </key>
+
+    <key name="lossless-colorspace" type="s">
+      <default>'rgb'</default>
+      <summary>Set lossless colorspace</summary>
+      <description>Select the colorspace with the lossless layer. This
+      helps to reduce some coloring artifacts due to mixing the YUV colorspace (H.264 and JPEG layers)
+      with the lossless layer, normally in the RGB colorspace.
+      The colorspaces are ['rgb', 'yuv_rec601', 'yuv_rec709']
+      </description>
+    </key>
+
+    <key name="enable-hardware-decoder" type="b">
+      <default>true</default>
+      <summary>Enable hardware decoder</summary>
+      <description>If enabled, the client will prefer the hardware decoder to the software one for H264
+      </description>
+    </key>
+
+    <key name="enable-pixel-format-selection" type="b">
+      <default>true</default>
+      <summary>Enable pixel format selection</summary>
+      <description>If enabled, the client will prefer the pixel formats which are best to offload work to gpu
+      </description>
+    </key>
+
+    <key name="enable-vaapi" type="b">
+      <default>true</default>
+      <summary>Enable hardware rendering of Video Acceleration API (VA-API) surfaces</summary>
+      <description>If enabled, VA-API surfaces will be directly rendered. This setting requires
+      * enable-hardware-decoder=true
+      * enable-pixel-format-selection=true
+      </description>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.state.window" path="/com/amazon/workspacesclient/dcv/state/window/">
+    <key name="state" type="i">
+      <default>0</default>
+    </key>
+
+    <key name="size" type="(ii)">
+      <default>(1024, 768)</default>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.state.connection" path="/com/amazon/workspacesclient/dcv/state/connection/">
+    <key name="quality" enum="com.amazon.workspacesclient.dcv.DcvQualityMode">
+      <default>'sharp'</default>
+    </key>
+
+    <key name="adaptive-resolution" type="b">
+      <default>true</default>
+      <summary>Whether to resize the server desktop automatically</summary>
+      <description>If set the client will ask the server to resize the desktop
+      to the size of the client.</description>
+    </key>
+
+    <key name="resolution" type="(uu)">
+      <default>(1920, 1080)</default>
+      <summary>The resolution to resize the server desktop</summary>
+      <description>If adaptive-resolution is false this settings is the one
+      in charge of setting the custom resolution server side.</description>
+    </key>
+
+    <key name="enable-qu" type="b">
+      <default>true</default>
+      <summary>Whether to enable quality updates</summary>
+      <description>Specifies whether to enable quality updates.</description>
+    </key>
+
+    <key name="enable-high-color-accuracy" type="b">
+      <default>false</default>
+      <summary>Enable high color accuracy</summary>
+      <description>Sets the high color accuracy server side.
+      The feature is available since DCV 2022.0.
+      To statically configure a server not supporting this feature,
+      use enable-yuv444-decoding.</description>
+    </key>
+
+    <key name="enable-metrics-in-toolbar" type="b">
+      <default>false</default>
+      <summary>Enable metrics in toolbar</summary>
+      <description>If enabled the metrics will be visible in the toolbar.</description>
+    </key>
+
+    <key name="enable-smartcard-redirection" type="b">
+      <default>true</default>
+      <summary>Enable smartcard redirection</summary>
+      <description>If enabled smartcard devices are redirected to the remote host.</description>
+    </key>
+
+    <key name="accurate-audio-video-sync" type="b">
+      <default>false</default>
+      <summary>Accurate Audio/Video Synchronization</summary>
+      <description>Accurate audio/video synchronization is enabled on the remotization.</description>
+    </key>
+
+    <key name="enable-high-pixel-density" type="b">
+      <default>false</default>
+      <summary>Enable high pixel density</summary>
+      <description>If enabled high pixel density will be used when rendering. macOS only.</description>
+    </key>
+
+    <key name="debug-layer" type="b">
+      <default>false</default>
+      <summary>Wether to paint the different regions with a color</summary>
+      <description>If set to true, the regions on the layers will be painted in different colors.</description>
+    </key>
+
+    <key name="web-port" type="q">
+      <default>8443</default>
+      <summary>TCP port for the WebSocket transport</summary>
+      <description>Specify the port to use for the TCP connection.
+      </description>
+    </key>
+
+    <key name="quic-port" type="q">
+      <default>8443</default>
+      <summary>UDP port for the QUIC transport</summary>
+      <description>Specify the port to use for the UDP connection.
+      </description>
+    </key>
+
+    <key name="transport" enum="com.nicesoftware.DcvViewer.DcvTransportSelection">
+      <default>'auto'</default>
+      <summary>Specify the transport to use</summary>
+      <description>
+        Specify the transport to use between 'auto', 'websocket' and 'quic'.
+      </description>
+    </key>
+
+    <key name="dqt-alpn-versions" type="as">
+      <default>['Dqt10','Dqt02Draft','Dqt01Draft','Dcv20Basic']</default>
+      <summary>Specify the DQT application versions meant to be used during connection establishment</summary>
+      <description>
+        Specify a list of supported ALPN versions required by client.
+        During handshake, the server will select the first available matching from the list, in order.
+        Therefore, the list is ordered by version selection preferences.
+
+        Currently, the following version values are supported:
+            - Dqt10
+            - Dqt02Draft
+            - Dqt01Draft
+            - Dcv20Basic
+      </description>
+    </key>
+
+    <key name="custom-channels" type="as">
+      <default>[]</default>
+      <summary>Specify the custom channels</summary>
+      <description>
+        Specify the custom channels as list of channel names with format namespace::name.
+      </description>
+    </key>
+
+    <key name="enable-unreliable-input" type="b">
+      <default>false</default>
+      <summary>Whether to enable the unreliable transport for input.</summary>
+      <description>
+        This is an experimental setting.
+        When enabled it, it allows transmission of input data over unreliable transport increasing the responsiveness.
+      </description>
+    </key>
+
+    <key name="enable-timezone-redirection" type="b">
+      <default>true</default>
+      <summary>Whether to enable the timezone redirection.</summary>
+      <description>
+        Specify whether to send local timezone information to the server.
+      </description>
+    </key>
+
+    <key name="enable-printer-redirection" type="b">
+      <default>true</default>
+      <summary>Whether to enable the printer redirection.</summary>
+      <description>
+        Specify whether to enable printer redirection. This enables the client printers to be available in the server.
+      </description>
+    </key>
+
+    <key name="selected-webcam" type="s">
+      <default>''</default>
+      <summary>The selected webcam.</summary>
+      <description>
+        Specify the ID of the webcam in the preferences dialog.
+      </description>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.state.history-entry" path="/com/amazon/workspacesclient/dcv/state/history-entry/">
+    <key name="connect-history" type="as">
+      <default>['']</default>
+    </key>
+
+    <key name="username-history" type="as">
+      <default>['']</default>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.state.latest-monitors" path="/com/amazon/workspacesclient/dcv/state/latest-monitors/">
+    <key name="layout" type="s">
+      <default>''</default>
+    </key>
+
+    <key name="selection" type="s">
+      <default>''</default>
+    </key>
+  </schema>
+
+   <schema id="com.amazon.workspacesclient.dcv.security" path="/com/amazon/workspacesclient/dcv/security/" gettext-domain="dcvclient">
+    <key name="ciphers" type="s">
+      <default>'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384'</default>
+      <summary>Cipher list used on the TLS connections</summary>
+      <description>
+        Cipher list used on the TLS connections. The cipher list must be separated using the character ":"
+        and must be supported by openssl.
+      </description>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.audio" path="/com/amazon/workspacesclient/dcv/audio/">
+    <key name="playback-channels" type="u">
+      <default>0</default>
+      <summary>The number of audio channels used for playback</summary>
+      <description>The number of audio channels to be used for multicahnnel playback.
+      Supported values:  2 (Stereo), 4 (Quadriphonic), 6 (Surround 5.1), 8 (Surround 7.1).
+      If 0 stereo will be considered.</description>
+    </key>
+
+    <key name="buffer-time" type="u">
+      <default>40</default>
+      <summary>Audio buffer-time in ms</summary>
+      <description>Sets the buffer-time in ms used to play the audio on the local speakers.
+      Default value 40 ms.</description>
+    </key>
+
+    <key name="buffer-time-avsync" type="u">
+      <default>30</default>
+      <summary>Audio buffer-time in  when A/V Sync is active</summary>
+      <description>Sets the buffer-time in ms used to play the audio on the local speakers
+      when A/V Sync is active.</description>
+    </key>
+
+    <key name="frame-length" type="u">
+      <default>0</default>
+      <summary>Audio frame-length in ms</summary>
+      <description>Sets the frame-length in ms used to grab the audio on the server.
+      If missing or 0 the server default will be considered.</description>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.mouse" path="/com/amazon/workspacesclient/dcv/mouse/">
+    <key name="enable-control-click-as-right-click" type="b">
+      <default>true</default>
+      <summary>Whether to treat Control + Left-Click as Right-Click on MacOS</summary>
+      <description>
+        Defines how to handle Control + Left-Click events in MacOS.
+        If set to 'true', MacOS will treat Control + Left-Click combinations as Right-Click.
+        If set to 'false', MacOS will treat Control + Left-Click combinations as Left-Click.
+      </description>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.keyboard" path="/com/amazon/workspacesclient/dcv/keyboard/">
+    <key name="option-key-mode" enum="com.amazon.workspacesclient.dcv.DcvOptionKeyMode">
+      <default>'alt'</default>
+      <summary>Behavior of the Option key on MacOS</summary>
+      <description>
+        Defines how to handle keyboard combinations which include the Option key.
+        If set to 'local', MacOS will allow the user to compose UTF-8 sequences.
+        If set to 'alt', the Option key will be mapped to the remote Alt modifier.
+      </description>
+    </key>
+
+    <key name="command-key-mode" enum="com.amazon.workspacesclient.dcv.DcvCommandKeyMode">
+      <default>'control'</default>
+      <summary>Behavior of the Command key on MacOS</summary>
+      <description>
+        Defines how to handle the remote Command key behaviour.
+        If set to 'control', it will send a remote Control key.
+        If set to 'meta', t will send a remote Meta key.
+      </description>
+    </key>
+
+    <key name="grab-all-keys" type="b">
+      <default>false</default>
+      <summary>Whether to grab the keyboard device to redirect all the keys.</summary>
+      <description>
+        If enabled, the keyboard device will be grabbed and all the keys will be redirected.
+        Device grabbing might have problems depending on the platform or windowing system,
+        so enable this setting at your own risk of blocking your whole system.
+        Deprecated: use grab-keyboard-mode setting.
+      </description>
+    </key>
+
+    <key name="grab-keyboard-mode" enum="com.amazon.workspacesclient.dcv.DcvGrabKeyboardMode">
+      <default>'on-fullscreen'</default>
+      <summary>Whether to grab the keyboard device to redirect all the keys.</summary>
+      <description>
+        Defines if the keyboard device will grab all the keys.
+        If set to 'on-fullscreen' the keyboard device is grabbed only on fullscreen mode.
+        If set to 'always' the keyboard device will be grabbed always.
+        If set to 'never' the keyboard device will not be grabbed.
+        Note that device grabbing might have problems depending on the platform or windowing system,
+        so enable this setting at your own risk of blocking your whole system.
+      </description>
+    </key>
+
+    <key name="map-control-alt-end-to-sas" type="b">
+      <default>false</default>
+      <summary>Whether to map Control+Alt+End to Control+Alt+Del.</summary>
+      <description>
+        If enabled, Control+Alt+End will be mapped to Control+Alt+Del. Normally
+        Control+Alt+Del will be handled by the operating system and the viewer
+        will not be able to send it, for this we provide this mapping to still
+        be able to send it to the remote instance.
+      </description>
+    </key>
+  </schema>
+
+  <schema id="com.amazon.workspacesclient.dcv.extensions" path="/com/amazon/workspacesclient/dcv/extensions/" gettext-domain="dcv">
+    <key name="load-policy" enum="com.amazon.workspacesclient.dcv.DcvExtensionsManagerLoadPolicy">
+      <default>'only-signed'</default>
+      <summary>Determines if extensions are checked for digital signatures or not.</summary>
+      <description>The valid values are 'all' or 'only-signed' (default='only-signed').
+      If 'all' is specified, extensions will be loaded without checking if the executable
+      contains a valid digital signature. If 'only-signed' is specified, extensions will
+      only be loaded if their executable contains a valid digital signature.</description>
+    </key>
+  </schema>
+
+</schemalist>
