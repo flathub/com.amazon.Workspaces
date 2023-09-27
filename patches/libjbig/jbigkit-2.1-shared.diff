@@ -1,0 +1,181 @@
+diff -Naur jbigkit-2.1/libjbig/Makefile jbigkit-2.1.oden/libjbig/Makefile
+--- jbigkit-2.1/libjbig/Makefile	2014-03-27 19:47:15.000000000 +0100
++++ jbigkit-2.1.oden/libjbig/Makefile	2014-04-09 13:20:42.000000000 +0200
+@@ -2,27 +2,52 @@
+ 
+ # Select an ANSI/ISO C compiler here, GNU gcc is recommended
+ CC = gcc
++CFLAGS = -g -O2 -W -Wall -ansi -pedantic -fPIC # --coverage
++LDFLAGS = 
+ 
+-# Options for the compiler: A high optimization level is suggested
+-CFLAGS = -g -O -W -Wall -ansi -pedantic # --coverage
+-
+-all: libjbig.a libjbig85.a tstcodec tstcodec85
+-
+-tstcodec: tstcodec.o jbig.o jbig_ar.o
+-	$(CC) $(CFLAGS) -o tstcodec tstcodec.o jbig.o jbig_ar.o
+-
+-tstcodec85: tstcodec85.o jbig85.o jbig_ar.o
+-	$(CC) $(CFLAGS) -o tstcodec85 tstcodec85.o jbig85.o jbig_ar.o
+-
+-libjbig.a: jbig.o jbig_ar.o
+-	rm -f libjbig.a
+-	ar rc libjbig.a jbig.o jbig_ar.o
+-	-ranlib libjbig.a
+-
+-libjbig85.a: jbig85.o jbig_ar.o
+-	rm -f libjbig85.a
+-	ar rc libjbig85.a jbig85.o jbig_ar.o
+-	-ranlib libjbig85.a
++DESTDIR=
++prefix=/app
++libdir=$(prefix)/lib
++includedir=$(prefix)/include
++bindir=$(prefix)/bin
++mandir=$(prefix)/share/man
++
++LT_CURRENT=0
++LT_REVISION=0
++LT_AGE=0
++ 
++all: libjbig.la libjbig85.la tstcodec tstcodec85
++
++tstcodec: tstcodec.o libjbig.la
++	libtool --mode=link --tag=CC $(CC) $(CFLAGS) $(LDFLAGS) \
++	-o tstcodec tstcodec.o libjbig.la
++
++tstcodec85: tstcodec85.o libjbig85.la
++	libtool --mode=link --tag=CC $(CC) $(CFLAGS) $(LDFLAGS) \
++	-o tstcodec85 tstcodec85.o libjbig85.la
++
++%.lo: %.c
++	libtool --mode=compile --tag=CC $(CC) $(CFLAGS) -c $*.c
++
++libjbig.la: jbig.lo jbig_ar.lo
++	libtool --mode=link --tag=CC $(CC) $(LDFLAGS) \
++	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
++	-o libjbig.la jbig.lo jbig_ar.lo -rpath $(libdir) 
++
++libjbig85.la: jbig85.lo jbig_ar.lo
++	libtool --mode=link --tag=CC $(CC) $(LDFLAGS) \
++	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
++	-o libjbig85.la jbig85.lo jbig_ar.lo -rpath $(libdir) 
++
++jbig.lo: jbig.c jbig.h
++jbig85.lo: jbig85.c jbig.h
++
++install:
++	install -m0755 -d $(DESTDIR)$(libdir)
++	install -m0755 -d $(DESTDIR)$(includedir)
++	libtool --mode=install install libjbig.la $(DESTDIR)$(libdir)
++	libtool --mode=install install libjbig85.la $(DESTDIR)$(libdir)
++	install -m0644 jbig85.h jbig_ar.h jbig.h $(DESTDIR)$(includedir)
+ 
+ jbig.o: jbig.c jbig.h jbig_ar.h
+ jbig85.o: jbig85.c jbig85.h jbig_ar.h
+@@ -53,3 +79,5 @@
+ 	rm -f *.o *.gcda *.gcno *.gcov *.plist *~ core gmon.out dbg_d\=??.pbm
+ 	rm -f t82test.pbm
+ 	rm -f tstcodec tstcodec85
++	rm -rf .libs
++	rm -f *.*o *.*a
+diff -Naur jbigkit-2.1/Makefile jbigkit-2.1.oden/Makefile
+--- jbigkit-2.1/Makefile	2014-03-27 19:47:15.000000000 +0100
++++ jbigkit-2.1.oden/Makefile	2014-04-09 13:21:00.000000000 +0200
+@@ -28,6 +28,10 @@
+ 	cd libjbig  && $(MAKE) analyze
+ 	cd pbmtools && $(MAKE) analyze
+ 
++install:
++	$(MAKE) -C libjbig install
++	$(MAKE) -C pbmtools install
++
+ clean:
+ 	rm -f *~ core
+ 	cd libjbig  && $(MAKE) clean
+diff -Naur jbigkit-2.1/pbmtools/Makefile jbigkit-2.1.oden/pbmtools/Makefile
+--- jbigkit-2.1/pbmtools/Makefile	2014-03-27 19:47:15.000000000 +0100
++++ jbigkit-2.1.oden/pbmtools/Makefile	2014-04-09 13:20:16.000000000 +0200
+@@ -4,8 +4,16 @@
+ CC = gcc
+ 
+ # Options for the compiler
+-CFLAGS = -g -O -W -Wall -Wno-unused-result -ansi -pedantic # --coverage
+-CPPFLAGS = -I../libjbig 
++CFLAGS = -g -O -W -Wall -Wno-unused-result -ansi -pedantic -fPIC # --coverage
++CPPFLAGS = -I../libjbig
++LDFLAGS = 
++
++DESTDIR=
++prefix=/app
++libdir=$(prefix)/lib
++includedir=$(prefix)/include
++bindir=$(prefix)/bin
++mandir=$(prefix)/share/man
+ 
+ .SUFFIXES: .1 .5 .txt $(SUFFIXES)
+ .PHONY: txt test test82 test85 clean
+@@ -14,30 +22,35 @@
+ 
+ txt: pbmtojbg.txt jbgtopbm.txt pbm.txt pgm.txt
+ 
+-pbmtojbg: pbmtojbg.o ../libjbig/libjbig.a
+-	$(CC) $(CFLAGS) -o pbmtojbg pbmtojbg.o -L../libjbig -ljbig
+-
+-jbgtopbm: jbgtopbm.o ../libjbig/libjbig.a
+-	$(CC) $(CFLAGS) -o jbgtopbm jbgtopbm.o -L../libjbig -ljbig
+-
+-pbmtojbg85: pbmtojbg85.o ../libjbig/libjbig85.a
+-	$(CC) $(CFLAGS) -o pbmtojbg85 pbmtojbg85.o -L../libjbig -ljbig85
+-
+-jbgtopbm85: jbgtopbm85.o ../libjbig/libjbig85.a
+-	$(CC) $(CFLAGS) -o jbgtopbm85 jbgtopbm85.o -L../libjbig -ljbig85
++pbmtojbg: pbmtojbg.o ../libjbig/libjbig.la
++	libtool --mode=link --tag=CC $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) \
++	-o pbmtojbg pbmtojbg.o ../libjbig/libjbig.la
++
++jbgtopbm: jbgtopbm.o ../libjbig/libjbig.la
++	libtool --mode=link --tag=CC $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) \
++	-o jbgtopbm jbgtopbm.o ../libjbig/libjbig.la
++
++pbmtojbg85: pbmtojbg85.o ../libjbig/libjbig85.la
++	libtool --mode=link --tag=CC $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) \
++	-o pbmtojbg85 pbmtojbg85.o ../libjbig/libjbig85.la
++
++jbgtopbm85: jbgtopbm85.o ../libjbig/libjbig85.la
++	libtool --mode=link --tag=CC $(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) \
++	-o jbgtopbm85 jbgtopbm85.o ../libjbig/libjbig85.la
+ 
+ jbgtopbm.o: jbgtopbm.c ../libjbig/jbig.h
+ pbmtojbg.o: pbmtojbg.c ../libjbig/jbig.h
+ jbgtopbm85.o: jbgtopbm85.c ../libjbig/jbig85.h
+ pbmtojbg85.o: pbmtojbg85.c ../libjbig/jbig85.h
+ 
+-../libjbig/libjbig.a: ../libjbig/jbig.c ../libjbig/jbig.h \
+-	../libjbig/jbig_ar.c ../libjbig/jbig_ar.h
+-	make -C ../libjbig libjbig.a
+-
+-../libjbig/libjbig85.a: ../libjbig/jbig85.c ../libjbig/jbig85.h \
+-	../libjbig/jbig_ar.c ../libjbig/jbig_ar.h
+-	make -C ../libjbig libjbig85.a
++install:
++	install -m0755 -d $(DESTDIR)$(bindir)
++	install -m0755 -d $(DESTDIR)$(mandir)/man1
++	install -m0755 -d $(DESTDIR)$(mandir)/man5
++	libtool --mode=install install pbmtojbg jbgtopbm \
++	pbmtojbg85 jbgtopbm85 $(DESTDIR)$(bindir)
++	install -m0644 pbmtojbg.1 jbgtopbm.1 $(DESTDIR)$(mandir)/man1
++	install -m0644 pbm.5 pgm.5 $(DESTDIR)$(mandir)/man5
+ 
+ analyze:
+ 	clang $(CPPFLAGS) --analyze *.c
+@@ -161,6 +174,7 @@
+ 	groff -man -Tascii -P -c -P -b -P -u $< >$@
+ 
+ clean:
+-	rm -f *.o *~ core pbmtojbg jbgtopbm pbmtojbg85 jbgtopbm85
++	rm -f *.*o *.*a *~ core pbmtojbg jbgtopbm pbmtojbg85 jbgtopbm85
+ 	rm -f test-*.jbg test-*.pbm test-*.pgm test-*.jbg85 test-*.pbm85
+ 	rm -f *.gcda *.gcno *.plist
++	rm -rf .libs
