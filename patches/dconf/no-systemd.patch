@@ -1,0 +1,18 @@
+diff --git a/service/meson.build b/service/meson.build
+index a2045e5..d919e97 100644
+--- a/service/meson.build
++++ b/service/meson.build
+@@ -12,13 +12,6 @@ configure_file(
+
+ systemd_service = 'dconf.service'
+
+-configure_file(
+-  input: systemd_service + '.in',
+-  output: systemd_service,
+-  configuration: service_conf,
+-  install_dir: systemd_userunitdir,
+-)
+-
+ lib_sources = [
+   'dconf-blame.c',
+   'dconf-keyfile-writer.c',
