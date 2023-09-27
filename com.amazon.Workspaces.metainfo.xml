@@ -21,38 +21,7 @@
     </screenshot>
   </screenshots>
   <releases>
-    <release version="4.6.0.4187" date="2023-06-22"/>
-    <release version="4.5.0.4198" date="2023-06-21"/>
-    <release version="4.4.0.1997" date="2022-12-27"/>
-    <release version="4.3.0.1766" date="2022-10-05"/>
-    <release version="4.2.0.1665" date="2022-08-25"/>
-    <release version="4.1.0.1523" date="2022-04-14"/>
-    <release version="4.0.1.1302" date="2021-08-12"/>
-    <release version="3.1.9.1245" date="2021-07-01"/>
-    <release version="3.1.8.1198" date="2021-06-04"/>
-    <release version="3.1.7.1151" date="2021-05-06"/>
-    <release version="3.1.5.1105" date="2021-04-08"/>
-    <release version="3.1.0.813" date="2020-11-24"/>
-    <release version="3.0.12.747" date="2020-11-12"/>
-    <release version="3.0.11.658" date="2020-10-02"/>
-    <release version="3.0.10.629" date="2020-09-16"/>
-    <release version="3.0.9.568" date="2020-08-14"/>
-    <release version="3.0.8.529" date="2020-07-23"/>
-    <release date="2020-06-03" version="3.0.7">
-      <description>
-        Minor bug fixes and enhancements
-      </description>
-    </release>
-    <release date="2020-04-29" version="3.0.6">
-      <description>
-        <ul>
-          <li>Adds support for toggling between high DPI and standard DPI displays</li>
-          <li>Resolves an issue with the user interface displaying a login prompt if single sign-on (SSO) is enabled for Amazon WorkDocs</li>
-          <li>Resolves an issue where the Windows logo key did not map correctly into the WorkSpace</li>
-          <li>Minor bug fixes and enhancements</li>
-        </ul>
-      </description>
-    </release>
+    <release version="2023.0.4395" date="2023-08-18"/>
   </releases>
   <content_rating type="oars-1.1"/>
 </component>
