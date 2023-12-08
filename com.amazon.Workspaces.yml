@@ -13,7 +13,6 @@ finish-args:
   - --device=dri
   - --socket=pulseaudio
   - --share=network
-  - --env=LD_LIBRARY_PATH=/app/extra/bin
 
 cleanup:
   - '*.a'
@@ -130,7 +129,7 @@ modules:
   - name: workspacesclient
     buildsystem: simple
     build-commands:
-      - mkdir -p ${FLATPAK_DEST}/bin ${FLATPAK_DEST}/lib
+      - mkdir -p ${FLATPAK_DEST}/bin ${FLATPAK_DEST}/lib/pcoip-client/vchan_plugins
       - install apply_extra ${FLATPAK_DEST}/bin
       - install -Dm644 -t ${FLATPAK_DEST}/share/metainfo/ ${FLATPAK_ID}.metainfo.xml
       - install -Dm644 -t ${FLATPAK_DEST}/share/applications/ ${FLATPAK_ID}.desktop
@@ -139,6 +138,7 @@ modules:
       - ARCH_TRIPLE=$(gcc --print-multiarch) && cp -a /usr/lib/${ARCH_TRIPLE}/libbfd-*.so
         ${FLATPAK_DEST}/lib && cp -a /usr/lib/${ARCH_TRIPLE}/libsframe.so* ${FLATPAK_DEST}/lib
       - ln -s ${FLATPAK_DEST}/extra/bin/workspacesclient ${FLATPAK_DEST}/bin/workspacesclient
+      - ln -s ${FLATPAK_DEST}/extra/bin/pcoip-client/vchan_plugins/libvchan-plugin-clipboard.so ${FLATPAK_DEST}/lib/pcoip-client/vchan_plugins/libvchan-plugin-clipboard.so
 
     sources:
       - type: script
