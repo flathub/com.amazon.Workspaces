@@ -91,7 +91,16 @@ modules:
     cleanup:
       - /bin
 
-  - shared-modules/libsoup/libsoup-2.4.json
+  # - shared-modules/libsoup/libsoup-2.4.json
+  # Not sure if new client supports libsoup 3.
+  # - name: libsoup-2
+  #   buildsystem: meson
+  #   config-opts:
+  #     - -Dtests=false
+  #   sources:
+  #     - type: archive
+  #       url: https://download.gnome.org/sources/libsoup/2.99/libsoup-2.99.9.tar.xz
+  #       sha256: 20fe3306836fa759a1d2a98942cfc5bdb0e3ce8c2ff103f42834896413e915cc
 
   - name: unifdef
     no-autogen: true
@@ -111,7 +120,7 @@ modules:
       - -DPORT=GTK
       - -DENABLE_BUBBLEWRAP_SANDBOX=OFF
       - -DENABLE_DOCUMENTATION=OFF
-      - -DUSE_SOUP2=ON
+      #- -DUSE_SOUP2=ON
       - -DENABLE_MINIBROWSER=OFF
       - -DENABLE_WEBDRIVER=OFF
       - -DENABLE_GAMEPAD=OFF
