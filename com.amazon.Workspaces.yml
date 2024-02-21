@@ -150,5 +150,5 @@ modules:
         filename: workspacesclient.deb
         only-arches: [x86_64]
         url: https://d3nt0h4h6pmmc4.cloudfront.net/new_workspacesclient_jammy_amd64.deb
-        sha256: c3ad39ea8e26008dfd484abde2ce5469b74f9650ab49a2b5d4b322f7b5de0d80
-        size: 58664720
+        sha256: 14a4f33ce57dbefd920dd3cc57424b7e4b98f3e4376609b59cfab4ece5ff361f
+        size: 66527772
