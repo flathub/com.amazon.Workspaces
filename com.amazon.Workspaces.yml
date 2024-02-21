@@ -125,17 +125,19 @@ modules:
           version-pattern: LATEST-STABLE-(\d[\.\d]+\d)
           url-template: https://webkitgtk.org/releases/webkitgtk-$version.tar.xz
 
-  - name: icu70
+  - name: icu66
     buildsystem: simple
     build-commands:
       - cd source && ./configure --prefix=${FLATPAK_DEST} --sbindir=${FLATPAK_DEST}/bin
         --disable-tests --disable-samples && make -j $FLATPAK_BUILDER_N_JOBS install
+
     sources:
       - type: archive
-        url: https://github.com/unicode-org/icu/releases/download/release-70-1/icu4c-70_1-src.tgz
-        sha256: 8d205428c17bf13bb535300669ed28b338a157b1c01ae66d31d0d3e2d47c3fd5
+        url: https://github.com/unicode-org/icu/releases/download/release-66-1/icu4c-66_1-src.tgz
+        sha256: 52a3f2209ab95559c1cf0a14f24338001f389615bf00e2585ef3dbc43ecf0a2e
     cleanup:
       - /bin
+
 
   - name: workspacesclient
     buildsystem: simple
