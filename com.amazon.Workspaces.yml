@@ -104,6 +104,39 @@ modules:
     cleanup:
       - '*'
 
+  - name: webkit2gtk-4.0
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - -DPORT=GTK
+      - -DENABLE_BUBBLEWRAP_SANDBOX=OFF
+      - -DENABLE_DOCUMENTATION=OFF
+      - -DUSE_SOUP2=ON
+      - -DENABLE_MINIBROWSER=OFF
+      - -DENABLE_WEBDRIVER=OFF
+      - -DENABLE_GAMEPAD=OFF
+    sources:
+      - type: archive
+        url: https://webkitgtk.org/releases/webkitgtk-2.42.1.tar.xz
+        sha256: 6f41fac9989d3ee51c08c48de1d439cdeddecbc757e34b6180987d99b16d2499
+        x-checker-data:
+          type: html
+          url: https://webkitgtk.org/releases/
+          version-pattern: LATEST-STABLE-(\d[\.\d]+\d)
+          url-template: https://webkitgtk.org/releases/webkitgtk-$version.tar.xz
+
+  - name: icu70
+    buildsystem: simple
+    build-commands:
+      - cd source && ./configure --prefix=${FLATPAK_DEST} --sbindir=${FLATPAK_DEST}/bin
+        --disable-tests --disable-samples && make -j $FLATPAK_BUILDER_N_JOBS install
+    sources:
+      - type: archive
+        url: https://github.com/unicode-org/icu/releases/download/release-70-1/icu4c-70_1-src.tgz
+        sha256: 8d205428c17bf13bb535300669ed28b338a157b1c01ae66d31d0d3e2d47c3fd5
+    cleanup:
+      - /bin
+
   - name: workspacesclient
     buildsystem: simple
     build-commands:
