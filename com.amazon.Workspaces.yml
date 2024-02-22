@@ -29,7 +29,6 @@ cleanup:
   - /share/vala
 
 modules:
-
   - name: dconf
     buildsystem: meson
     config-opts:
@@ -91,20 +90,6 @@ modules:
     cleanup:
       - /bin
 
-  - shared-modules/libsoup/libsoup-2.4.json
-  # Not sure if new client supports libsoup 3.
-
-  - name: unifdef
-    no-autogen: true
-    make-install-args:
-      - prefix=${FLATPAK_DEST}
-    sources:
-      - type: archive
-        url: https://dotat.at/prog/unifdef/unifdef-2.12.tar.xz
-        sha256: 43ce0f02ecdcdc723b2475575563ddb192e988c886d368260bc0a63aee3ac400
-    cleanup:
-      - '*'
-
   - name: webkit2gtk-4.0
     buildsystem: cmake-ninja
     config-opts:
@@ -118,13 +103,27 @@ modules:
       - -DENABLE_GAMEPAD=OFF
     sources:
       - type: archive
-        url: https://webkitgtk.org/releases/webkitgtk-2.42.5.tar.xz
-        sha256: b64278c1f20b8cfdbfb5ff573c37d871aba74a1db26d9b39f74e8953fe61e749
-        x-checker-data:
-          type: html
-          url: https://webkitgtk.org/releases/
-          version-pattern: LATEST-STABLE-(\d[\.\d]+\d)
-          url-template: https://webkitgtk.org/releases/webkitgtk-$version.tar.xz
+        url: https://webkitgtk.org/releases/webkitgtk-2.40.5.tar.xz
+        sha256: 7de051a263668621d91a61a5eb1c3771d1a7cec900043d4afef06c326c16037f
+        # Currently version locked because of rendering bug with nvidia cards
+        # https://github.com/flathub/flathub/pull/4520#issuecomment-1728489158
+        # x-checker-data:
+        #   type: html
+        #   url: https://webkitgtk.org/releases/
+        #   version-pattern: LATEST-STABLE-(\d[\.\d]+\d)
+        #   url-template: https://webkitgtk.org/releases/webkitgtk-$version.tar.xz
+    modules:
+      - shared-modules/libsoup/libsoup-2.4.json
+      - name: unifdef
+        no-autogen: true
+        make-install-args:
+          - prefix=${FLATPAK_DEST}
+        sources:
+          - type: archive
+            url: https://dotat.at/prog/unifdef/unifdef-2.12.tar.xz
+            sha256: 43ce0f02ecdcdc723b2475575563ddb192e988c886d368260bc0a63aee3ac400
+        cleanup:
+          - '*'
 
   - name: icu70
     buildsystem: simple
