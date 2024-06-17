@@ -165,9 +165,9 @@ modules:
       - type: extra-data
         filename: workspacesclient.deb
         only-arches: [x86_64]
-        url: https://d3nt0h4h6pmmc4.cloudfront.net/ubuntu/dists/focal/main/binary-amd64/workspacesclient_2024.1.4807_amd64.deb
-        sha256: defb0c72771da966681495e7a68ea7207f8e5158bb028c6ca9e7720ddcef7acb
-        size: 98849560
+        url: https://d3nt0h4h6pmmc4.cloudfront.net/ubuntu/dists/focal/main/binary-amd64/workspacesclient_4.7.0.4312_amd64.deb
+        sha256: 1b4a39b859c49225169a44cc507955722770fb6c7c7bf2a631f54113ba0b5d5f
+        size: 46652448
         x-checker-data:
           type: debian-repo
           package-name: workspacesclient
