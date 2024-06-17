@@ -3,8 +3,6 @@ runtime: org.gnome.Platform
 runtime-version: '46'
 sdk: org.gnome.Sdk
 command: workspacesclient
-tags:
-  - proprietary
 
 finish-args:
   - --socket=fallback-x11
@@ -91,42 +89,6 @@ modules:
     cleanup:
       - /bin
 
-  - shared-modules/libsoup/libsoup-2.4.json
-
-  - name: unifdef
-    no-autogen: true
-    make-install-args:
-      - prefix=${FLATPAK_DEST}
-    sources:
-      - type: archive
-        url: https://dotat.at/prog/unifdef/unifdef-2.12.tar.xz
-        sha256: 43ce0f02ecdcdc723b2475575563ddb192e988c886d368260bc0a63aee3ac400
-    cleanup:
-      - '*'
-
-  - name: webkit2gtk-4.0
-    buildsystem: cmake-ninja
-    config-opts:
-      - -DCMAKE_BUILD_TYPE=RelWithDebInfo
-      - -DPORT=GTK
-      - -DENABLE_BUBBLEWRAP_SANDBOX=OFF
-      - -DENABLE_DOCUMENTATION=OFF
-      - -DUSE_GTK4=OFF
-      - -DUSE_LIBBACKTRACE=OFF
-      - -DUSE_SOUP2=ON
-      - -DENABLE_MINIBROWSER=OFF
-      - -DENABLE_WEBDRIVER=OFF
-      - -DENABLE_GAMEPAD=OFF
-    sources:
-      - type: archive
-        url: https://webkitgtk.org/releases/webkitgtk-2.44.2.tar.xz
-        sha256: 523f42c8ff24832add17631f6eaafe8f9303afe316ef1a7e1844b952a7f7521b
-        x-checker-data:
-          type: html
-          url: https://webkitgtk.org/releases/
-          version-pattern: LATEST-STABLE-(\d[\.\d]+\d)
-          url-template: https://webkitgtk.org/releases/webkitgtk-$version.tar.xz
-
   - name: icu70
     buildsystem: simple
     build-commands:
@@ -154,8 +116,7 @@ modules:
         dest-filename: apply_extra
         commands:
           - bsdtar -Oxf workspacesclient.deb data.tar.xz | bsdtar -xf -
-          - rm -rf usr/share/applications usr/share/icons workspacesclient.deb
-          - chmod -R 755 usr/lib
+          - rm -rf usr/share/applications usr/share/icons usr/share/doc usr/share/icons workspacesclient.deb
           - ln -sf /app/lib/gio/modules/libdconfsettings.so usr/lib/x86_64-linux-gnu/workspacesclient/dcv/gio/modules/
           - sed -i -e "s/basedir=\/usr/basedir=\/app\/extra\/usr/g" -e "/LD_LIBRARY_PATH/d" -e "/XDG_DATA_DIRS/d" usr/lib/x86_64-linux-gnu/workspacesclient/dcv/dcvclient
           - GSETTINGS_SCHEMA_DIR="./usr/share/glib-2.0/schemas:${GSETTINGS_SCHEMA_DIR}" glib-compile-schemas usr/share/glib-2.0/schemas
