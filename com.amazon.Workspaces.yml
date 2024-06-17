@@ -127,7 +127,7 @@ modules:
         dest-filename: run.sh
         commands:
           - set -e
-          - export LD_LIBRARY_PATH="/app/extra/usr/lib/x86_64-linux-gnu/workspacesclient/dcv:/app/lib:/app/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}"
+          - export LD_LIBRARY_PATH="/app/lib:/usr/lib/x86_64-linux-gnu:/app/extra/usr/lib/x86_64-linux-gnu/workspacesclient/dcv"
           - export PATH="/app/extra/usr/lib/x86_64-linux-gnu/workspacesclient/dcv:${PATH}"
           - export XDG_DATA_DIRS="/app/extra/usr/share:${XDG_DATA_DIRS}"
           - export GTK_IM_MODULE_FILE="/app/extra/usr/lib/x86_64-linux-gnu/workspacesclient/dcv/gtk-3.0/3.0.0/immodules.cache"
