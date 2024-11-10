@@ -75,8 +75,8 @@ modules:
       - -DENABLE_GAMEPAD=OFF
     sources:
       - type: archive
-        url: https://webkitgtk.org/releases/webkitgtk-2.44.2.tar.xz
-        sha256: 523f42c8ff24832add17631f6eaafe8f9303afe316ef1a7e1844b952a7f7521b
+        url: https://webkitgtk.org/releases/webkitgtk-2.46.3.tar.xz
+        sha256: 85e09fa6ff9fea49678ba9975dbc64ea3242833f8f8a7d6a8937b2f292fcb28d
         x-checker-data:
           type: html
           url: https://webkitgtk.org/releases/
@@ -119,8 +119,8 @@ modules:
 
     sources:
       - type: archive
-        url: https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/1.3.43/GraphicsMagick-1.3.43.tar.xz
-        sha256: 2b88580732cd7e409d9e22c6116238bef4ae06fcda11451bf33d259f9cbf399f
+        url: https://sourceforge.net/projects/graphicsmagick/files/graphicsmagick/1.3.45/GraphicsMagick-1.3.45.tar.xz
+        sha256: dcea5167414f7c805557de2d7a47a9b3147bcbf617b91f5f0f4afe5e6543026b
         x-checker-data:
           type: anitya
           project-id: 1248
