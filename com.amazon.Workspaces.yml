@@ -73,10 +73,11 @@ modules:
       - -DENABLE_MINIBROWSER=OFF
       - -DENABLE_WEBDRIVER=OFF
       - -DENABLE_GAMEPAD=OFF
+      - -DENABLE_SPEECH_SYNTHESIS=OFF
     sources:
       - type: archive
-        url: https://webkitgtk.org/releases/webkitgtk-2.46.3.tar.xz
-        sha256: 85e09fa6ff9fea49678ba9975dbc64ea3242833f8f8a7d6a8937b2f292fcb28d
+        url: https://webkitgtk.org/releases/webkitgtk-2.48.0.tar.xz
+        sha256: 94904a55cf12d44a4e36ceadafff02d46da73d76be9b4769f34cbfdf0eebf88e
         x-checker-data:
           type: html
           url: https://webkitgtk.org/releases/
